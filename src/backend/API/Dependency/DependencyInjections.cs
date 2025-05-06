@@ -15,6 +15,7 @@ namespace API.Dependency
     {
         public static void AddDependency(this WebApplicationBuilder builder)
         {
+            builder.Services.AddSwaggerGen();
             builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection("JwtConfiguration"));
 
             var config = builder.Configuration.GetSection("JwtConfiguration").Get<JwtConfiguration>();

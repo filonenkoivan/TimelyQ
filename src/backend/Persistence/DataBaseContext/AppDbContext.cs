@@ -1,5 +1,7 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +12,58 @@ namespace Persistence.DataBaseContext
 {
     public class AppDbContext : DbContext
     {
-        public User Users { get; set; }
+        public DbSet<User> Users { get; set; }
 
-        public User Schedule { get; set; }
+        public DbSet<Schedule> Schedule { get; set; }
 
-        public AppDbContext(DbContextOptions options) : base(options)
+        public AppDbContext()
         {
-            
+
+        }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new AdminConfiguration());
+            modelBuilder.ApplyConfiguration(new ScheduleConfiguration());
+
+            base.OnModelCreating(modelBuilder);
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                   .SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile("appsettings.json")
+                   .Build();
+                var connectionString = configuration.GetConnectionString("Timelyq");
+                optionsBuilder.UseNpgsql(connectionString);
+            }
         }
     }
+    public class UserConfiguration : IEntityTypeConfiguration<User>
+    {
+        public void Configure(EntityTypeBuilder<User> builder)
+        {
+            builder.HasKey(x => x.Id);
+        }
+    }
+    public class AdminConfiguration : IEntityTypeConfiguration<Admin>
+    {
+        public void Configure(EntityTypeBuilder<Admin> builder)
+        {
+            builder.HasOne(x => x.Schedule).WithOne(x => x.Admin);
+        }
+    }
+    public class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
+    {
+        public void Configure(EntityTypeBuilder<Schedule> builder)
+        {
+            builder.HasKey(x => x.Id);
+        }
+    }
+
 }

@@ -1,6 +1,6 @@
 ﻿namespace API.Contracts.User
 {
-    public class RegisterRequest
+    public class RequestRegister
     {
         public string? Name { get; set; }
         public string? Surname { get; set; }

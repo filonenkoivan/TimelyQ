@@ -14,6 +14,14 @@ builder.AddDependency();
 var app = builder.Build();
 
 
+if (builder.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+
+
 app.MapAuthEndpoints();
 app.UseAuthentication();
 app.UseAuthorization();
