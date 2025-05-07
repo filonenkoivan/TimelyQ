@@ -12,17 +12,33 @@ using System.Threading.Tasks;
 
 namespace Persistence.Repository
 {
-    public class UserRepository<T>(AppDbContext db) : IUserRepository<T> where T: User
+    public class UserRepository(AppDbContext db) : IUserRepository
     {
-        public async Task<T> GetUserAsync(string login, LoginType type = LoginType.Login)
+        public async Task CreateUserAsync(User user)
+        {
+            await db.Users.AddAsync(user);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task CreateUserBusinessAsync(User user, UserBusiness businessInfo)
+        {
+            await db.Users.AddAsync(user);
+
+            //UserBusiness userBusiness = new UserBusiness();
+            await db.UserBusiness.AddAsync(businessInfo);
+
+            await db.SaveChangesAsync();
+        }
+
+        public async Task<User> GetUserAsync(string login, LoginType type = LoginType.Login)
         {
             return type switch
             {
-                LoginType.Phone => await db.Set<T>().FirstOrDefaultAsync(x => x.PhoneNumber == login),
+                LoginType.Phone => await db.Users.FirstOrDefaultAsync(x => x.PhoneNumber == login),
 
-                LoginType.Email => await db.Set<T>().FirstOrDefaultAsync(x => x.Email == login),
+                LoginType.Email => await db.Users.FirstOrDefaultAsync(x => x.Email == login),
 
-                _ => await db.Set<T>().FirstOrDefaultAsync(x => x.Name == login)
+                _ => await db.Users.FirstOrDefaultAsync(x => x.Name == login)
         };
         }
     }

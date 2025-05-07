@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Admin : User
+    public class UserBusiness
     {
         public string? CompanyName { get; set; }
         public CompanyCategory CompanyCategory { get; set; }
         public Schedule? Schedule { get; set; }
+
+        public User? User { get; set; }
+        public int UserId { get; set; }
 
     }
 }

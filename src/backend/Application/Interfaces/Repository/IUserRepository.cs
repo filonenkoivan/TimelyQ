@@ -13,8 +13,8 @@ namespace Application.Interfaces.Repository
     {
         public Task<User> GetUserAsync(string login, LoginType type);
 
-        public Task CreateUserAsync(User user, UserBusiness businessInfo);
-        public Task CreateUserBusinessAsync(User user);
+        public Task CreateUserAsync(User user);
+        public Task CreateUserBusinessAsync(User user, UserBusiness businessInfo);
 
     }
 }

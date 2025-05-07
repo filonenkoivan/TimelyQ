@@ -1,4 +1,4 @@
-﻿using API.Contracts.User;
+﻿using API.Contracts;
 using API.Validation;
 using Application.Interfaces;
 using Application.Interfaces.Repository;
@@ -27,10 +27,10 @@ namespace API.Dependency
 
             var config = builder.Configuration.GetSection("JwtConfiguration").Get<JwtConfiguration>();
             builder.Services.AddScoped<IValidator<RequestRegister>, UserCustomValidation>();
-            builder.Services.AddScoped(typeof(IUserService<>), typeof(UserService<>));
-            builder.Services.AddScoped(typeof(IUserRepository<>), typeof(UserRepository<>));
+
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IJwtProvider, JwtProvider>();
-            builder.Services.AddScoped<IUserRepository<User>, UserRepository<User>>();
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 string connectionString = builder.Configuration.GetConnectionString("Timelyq");

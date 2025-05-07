@@ -1,4 +1,4 @@
-﻿using API.Contracts.User;
+﻿using API.Contracts;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity.Data;
 

@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 
 namespace API.Contracts
 {
@@ -10,7 +11,29 @@ namespace API.Contracts
         public string? Email { get; set; }
         public string? Password { get; set; }
         public string? PasswordConfirm { get; set; }
-        public string? CompanyName { get; set; }
-    }
 
+        public string? CompanyName { get; set; }
+        public CompanyCategory CompanyCategory { get; set; }
+    }
+    public static class RequestRegisterExtension { 
+        public static User ToUserModel(this RequestRegister register)
+        {
+            return new User
+            {
+                Name = register.Name,
+                Surname = register.Surname,
+                PhoneNumber = register.PhoneNumber,
+                Email = register.Email,
+                Password = register.Password,
+            };
+        }
+        public static UserBusiness ToBusinessInfo(this RequestRegister register)
+        {
+            return new UserBusiness
+            {
+                CompanyCategory = register.CompanyCategory,
+                CompanyName = register.CompanyName
+            };
+        }
+    }
 }

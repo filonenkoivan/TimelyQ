@@ -1,4 +1,4 @@
-﻿using API.Contracts.User;
+﻿using API.Contracts;
 using Application.Enums;
 using Application.Interfaces;
 using Application.Models;
@@ -16,31 +16,44 @@ namespace API.Endpoints
         {
             app.Map("/login", Login);
             app.Map("/register", Register);
+            app.Map("/register-business", RegisterBusiness);
         }
 
-        public static async Task<IResult> Login(RequestLogin request, IUserService<User> userService, HttpContext context)
+        public static async Task<IResult> Login(
+            RequestLogin request,
+            IUserService userService,
+            HttpContext context)
         {
             BasicResponse<string> response = await userService.Login(request.Login, request.Password);
-
             context.Response.Cookies.Append("crumble-cookies", response.Data);
-
             return Results.Ok();
         }
 
-        public async static Task<IResult> Register(RequestRegister request, IValidator<RequestRegister> validator, IUserService<User> userService)
+        public async static Task<IResult> Register(
+            RequestRegister request,
+            IValidator<RequestRegister> validator,
+            IUserService userService)
         {
             var result = await validator.ValidateAsync(request);
             if (!result.IsValid)
             {
                 return Results.BadRequest(new BasicResponse<List<FluentValidation.Results.ValidationFailure>>(StatusCode.BadRequest, "Validation problem", result.Errors));
             }
-            userService.Register(new User { });
+            await userService.Register(request.ToUserModel());
             return Results.Ok();
         }
 
-        public static IResult RegisterAdmin(RegisterRequest request, IUserService<Admin> userService)
+        public async static Task<IResult> RegisterBusiness(
+            RequestRegister request,
+            IValidator<RequestRegister> validator,
+            IUserService userService)
         {
-
+            var result = await validator.ValidateAsync(request);
+            if (!result.IsValid)
+            {
+                return Results.BadRequest(new BasicResponse<List<FluentValidation.Results.ValidationFailure>>(StatusCode.BadRequest, "Validation problem", result.Errors));
+            }
+            await userService.RegisterBusiness(request.ToUserModel(), request.ToBusinessInfo());
             return Results.Ok();
         }
     }

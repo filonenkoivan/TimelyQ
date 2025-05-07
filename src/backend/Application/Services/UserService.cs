@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 
 namespace Application.Services
 {
-    public class UserService<T>(IJwtProvider jwtProvider, IUserRepository<T> repository) : IUserService<T> where T: User
+    public class UserService(IJwtProvider jwtProvider, IUserRepository repository) : IUserService
     {
         public async Task<BasicResponse<string>> Login(string login, string password)
         {
@@ -45,14 +45,15 @@ namespace Application.Services
             return LoginType.Login;
         }
 
-        public Task<BasicResponse<string>> Register(User user)
+        public async  Task<BasicResponse<string>> Register(User user, IUserRepository userRepository)
         {
-            throw new NotImplementedException();
+            await userRepository.CreateUserAsync(user);
         }
 
-        public Task<BasicResponse<string>> RegisterAdmin(Admin user)
+        public async Task<BasicResponse<string>> RegisterBusiness(User user, UserBusiness businessInfo, IUserRepository userRepository)
         {
-            throw new NotImplementedException();
+            await userRepository.CreateUserBusinessAsync(user, businessInfo);
         }
+
     }
 }
