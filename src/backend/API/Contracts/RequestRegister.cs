@@ -1,4 +1,6 @@
-﻿namespace API.Contracts.User
+﻿using Domain.Entities;
+
+namespace API.Contracts
 {
     public class RequestRegister
     {
@@ -8,5 +10,7 @@
         public string? Email { get; set; }
         public string? Password { get; set; }
         public string? PasswordConfirm { get; set; }
+        public string? CompanyName { get; set; }
     }
+
 }

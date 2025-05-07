@@ -1,12 +1,19 @@
-﻿using Application.Interfaces;
+﻿using API.Contracts.User;
+using API.Validation;
+using Application.Interfaces;
+using Application.Interfaces.Repository;
 using Application.Services;
+using Domain.Entities;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Persistence.Configurations;
 using Persistence.DataBaseContext;
 using Persistence.Providers;
+using Persistence.Repository;
 using System.Text;
 
 namespace API.Dependency
@@ -19,9 +26,11 @@ namespace API.Dependency
             builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection("JwtConfiguration"));
 
             var config = builder.Configuration.GetSection("JwtConfiguration").Get<JwtConfiguration>();
-            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IValidator<RequestRegister>, UserCustomValidation>();
+            builder.Services.AddScoped(typeof(IUserService<>), typeof(UserService<>));
+            builder.Services.AddScoped(typeof(IUserRepository<>), typeof(UserRepository<>));
             builder.Services.AddScoped<IJwtProvider, JwtProvider>();
-
+            builder.Services.AddScoped<IUserRepository<User>, UserRepository<User>>();
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 string connectionString = builder.Configuration.GetConnectionString("Timelyq");

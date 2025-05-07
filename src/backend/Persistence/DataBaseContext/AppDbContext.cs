@@ -16,10 +16,7 @@ namespace Persistence.DataBaseContext
 
         public DbSet<Schedule> Schedule { get; set; }
 
-        public AppDbContext()
-        {
 
-        }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
@@ -30,18 +27,6 @@ namespace Persistence.DataBaseContext
             modelBuilder.ApplyConfiguration(new ScheduleConfiguration());
 
             base.OnModelCreating(modelBuilder);
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                IConfigurationRoot configuration = new ConfigurationBuilder()
-                   .SetBasePath(Directory.GetCurrentDirectory())
-                   .AddJsonFile("appsettings.json")
-                   .Build();
-                var connectionString = configuration.GetConnectionString("Timelyq");
-                optionsBuilder.UseNpgsql(connectionString);
-            }
         }
     }
     public class UserConfiguration : IEntityTypeConfiguration<User>

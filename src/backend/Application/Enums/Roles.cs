@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.Enums
 {
-    public enum StatusCode
+    public enum Roles
     {
-        Success = 200,
-        NotFound = 404,
-        NoContent = 201,
-        BadRequest = 400
+        User,
+        UserBussines
     }
 }
