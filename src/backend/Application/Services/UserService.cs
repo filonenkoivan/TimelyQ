@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
+using Domain.Enums;
 using Application.Models;
 using Application.Interfaces.Repository;
 using Application.Enums;
@@ -27,7 +27,6 @@ namespace Application.Services
             }
 
             string token = jwtProvider.GenerateJwt(user);
-
             return new BasicResponse<string>(StatusCode.Success, "Token created", token);
 
         }
@@ -45,15 +44,20 @@ namespace Application.Services
             return LoginType.Login;
         }
 
-        public async  Task<BasicResponse<string>> Register(User user, IUserRepository userRepository)
+        public async  Task<BasicResponse<string>> Register(User user)
         {
-            await userRepository.CreateUserAsync(user);
+            user.Role = Roles.User;
+            await repository.CreateUserAsync(user);
+            return new BasicResponse<string>(StatusCode.Success, "User created", "");
         }
 
-        public async Task<BasicResponse<string>> RegisterBusiness(User user, UserBusiness businessInfo, IUserRepository userRepository)
+        public async Task<BasicResponse<string>> RegisterBusiness(User user, UserBusiness businessInfo)
         {
-            await userRepository.CreateUserBusinessAsync(user, businessInfo);
+            user.Role = Roles.UserBussines;
+            await repository.CreateUserBusinessAsync(user, businessInfo);
+            return new BasicResponse<string>(StatusCode.Success, "User created", "");
         }
+
 
     }
 }

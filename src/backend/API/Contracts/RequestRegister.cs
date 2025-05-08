@@ -6,6 +6,7 @@ namespace API.Contracts
     public class RequestRegister
     {
         public string? Name { get; set; }
+        public string? Login { get; set; }
         public string? Surname { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
@@ -25,6 +26,7 @@ namespace API.Contracts
                 PhoneNumber = register.PhoneNumber,
                 Email = register.Email,
                 Password = register.Password,
+                Login = register.Login
             };
         }
         public static UserBusiness ToBusinessInfo(this RequestRegister register)

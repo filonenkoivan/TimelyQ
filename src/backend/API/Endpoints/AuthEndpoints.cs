@@ -14,9 +14,9 @@ namespace API.Endpoints
     {
         public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
         {
-            app.Map("/login", Login);
-            app.Map("/register", Register);
-            app.Map("/register-business", RegisterBusiness);
+            app.MapPost("/login", Login);
+            app.MapPost("/register", Register);
+            app.MapPost("/register-business", RegisterBusiness);
         }
 
         public static async Task<IResult> Login(
@@ -26,7 +26,7 @@ namespace API.Endpoints
         {
             BasicResponse<string> response = await userService.Login(request.Login, request.Password);
             context.Response.Cookies.Append("crumble-cookies", response.Data);
-            return Results.Ok();
+            return Results.Ok(response);
         }
 
         public async static Task<IResult> Register(

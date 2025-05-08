@@ -23,6 +23,7 @@ if (builder.Environment.IsDevelopment())
 
 
 app.MapAuthEndpoints();
+app.MapScheduleEndpoints();
 app.UseAuthentication();
 app.UseAuthorization();
 

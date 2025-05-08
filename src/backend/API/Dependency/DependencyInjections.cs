@@ -30,7 +30,10 @@ namespace API.Dependency
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
+            builder.Services.AddScoped<ScheduleService>();
             builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 string connectionString = builder.Configuration.GetConnectionString("Timelyq");

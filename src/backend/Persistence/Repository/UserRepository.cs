@@ -22,11 +22,16 @@ namespace Persistence.Repository
 
         public async Task CreateUserBusinessAsync(User user, UserBusiness businessInfo)
         {
+            var isUserExist = await db.Users.FirstOrDefaultAsync(x => x.Login == user.Login);
+            if (isUserExist != null)
+            {
+                return;
+            }
+            user.UserBusiness = businessInfo;
+            businessInfo.User = user;
+
             await db.Users.AddAsync(user);
-
-            //UserBusiness userBusiness = new UserBusiness();
             await db.UserBusiness.AddAsync(businessInfo);
-
             await db.SaveChangesAsync();
         }
 
@@ -38,8 +43,8 @@ namespace Persistence.Repository
 
                 LoginType.Email => await db.Users.FirstOrDefaultAsync(x => x.Email == login),
 
-                _ => await db.Users.FirstOrDefaultAsync(x => x.Name == login)
-        };
+                _ => await db.Users.FirstOrDefaultAsync(x => x.Login == login)
+            };
         }
     }
 }

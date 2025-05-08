@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -16,17 +17,33 @@ namespace Persistence.DataBaseContext
         public DbSet<UserBusiness> UserBusiness { get; set; }
         public DbSet<Schedule> Schedule { get; set; }
 
-
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        public AppDbContext()
         {
         }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new AdminConfiguration());
+            modelBuilder.ApplyConfiguration(new UserBusinessConfiguration());
             modelBuilder.ApplyConfiguration(new ScheduleConfiguration());
 
             base.OnModelCreating(modelBuilder);
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json")
+                    .Build();
+                var connectionString = configuration.GetConnectionString("TImelyq");
+                optionsBuilder.UseNpgsql(connectionString);
+            }
         }
     }
     public class UserConfiguration : IEntityTypeConfiguration<User>
@@ -34,13 +51,22 @@ namespace Persistence.DataBaseContext
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.HasKey(x => x.Id);
+
+            builder
+                .HasOne(x => x.UserBusiness)
+                .WithOne(s => s.User)
+                .HasForeignKey<UserBusiness>(s => s.UserId);
         }
     }
-    public class AdminConfiguration : IEntityTypeConfiguration<Admin>
+    public class UserBusinessConfiguration : IEntityTypeConfiguration<UserBusiness>
     {
-        public void Configure(EntityTypeBuilder<Admin> builder)
+        public void Configure(EntityTypeBuilder<UserBusiness> builder)
         {
-            builder.HasOne(x => x.Schedule).WithOne(x => x.Admin);
+            builder.HasKey(x => x.Id);
+            builder
+                .HasOne(x => x.Schedule)
+                .WithOne(s => s.UserBusiness)
+                .HasForeignKey<Schedule>(s => s.UserBusinessId);
         }
     }
     public class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
@@ -48,6 +74,7 @@ namespace Persistence.DataBaseContext
         public void Configure(EntityTypeBuilder<Schedule> builder)
         {
             builder.HasKey(x => x.Id);
+            builder.HasMany(x => x.ScheduleEntries).WithOne(x => x.Schedule).HasForeignKey(x => x.ScheduleId);
         }
     }
 

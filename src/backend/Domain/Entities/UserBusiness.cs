@@ -12,9 +12,9 @@ namespace Domain.Entities
         public string? CompanyName { get; set; }
         public CompanyCategory CompanyCategory { get; set; }
         public Schedule? Schedule { get; set; }
+        public int Id { get; set; }
 
         public User? User { get; set; }
         public int UserId { get; set; }
-
     }
 }

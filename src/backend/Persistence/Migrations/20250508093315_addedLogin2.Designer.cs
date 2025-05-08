@@ -12,8 +12,8 @@ using Persistence.DataBaseContext;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250506065923_Init")]
-    partial class Init
+    [Migration("20250508093315_addedLogin2")]
+    partial class addedLogin2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,18 +33,18 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AdminId")
-                        .HasColumnType("integer");
-
                     b.Property<TimeSpan>("LunchTime")
                         .HasColumnType("interval");
 
                     b.Property<TimeSpan>("TimeForEachClient")
                         .HasColumnType("interval");
 
+                    b.Property<int>("UserBusinessId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AdminId")
+                    b.HasIndex("UserBusinessId")
                         .IsUnique();
 
                     b.ToTable("Schedule");
@@ -58,12 +58,10 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("character varying(5)");
-
                     b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Login")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -74,6 +72,9 @@ namespace Persistence.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("ScheduleId")
                         .HasColumnType("integer");
@@ -86,15 +87,15 @@ namespace Persistence.Migrations
                     b.HasIndex("ScheduleId");
 
                     b.ToTable("Users");
-
-                    b.HasDiscriminator().HasValue("User");
-
-                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Domain.Entities.Admin", b =>
+            modelBuilder.Entity("Domain.Entities.UserBusiness", b =>
                 {
-                    b.HasBaseType("Domain.Entities.User");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CompanyCategory")
                         .HasColumnType("integer");
@@ -102,18 +103,26 @@ namespace Persistence.Migrations
                     b.Property<string>("CompanyName")
                         .HasColumnType("text");
 
-                    b.HasDiscriminator().HasValue("Admin");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserBusiness");
                 });
 
             modelBuilder.Entity("Domain.Entities.Schedule", b =>
                 {
-                    b.HasOne("Domain.Entities.Admin", "Admin")
+                    b.HasOne("Domain.Entities.UserBusiness", "UserBusiness")
                         .WithOne("Schedule")
-                        .HasForeignKey("Domain.Entities.Schedule", "AdminId")
+                        .HasForeignKey("Domain.Entities.Schedule", "UserBusinessId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Admin");
+                    b.Navigation("UserBusiness");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -123,12 +132,28 @@ namespace Persistence.Migrations
                         .HasForeignKey("ScheduleId");
                 });
 
+            modelBuilder.Entity("Domain.Entities.UserBusiness", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithOne("UserBusiness")
+                        .HasForeignKey("Domain.Entities.UserBusiness", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.Schedule", b =>
                 {
                     b.Navigation("UserList");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Admin", b =>
+            modelBuilder.Entity("Domain.Entities.User", b =>
+                {
+                    b.Navigation("UserBusiness");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserBusiness", b =>
                 {
                     b.Navigation("Schedule");
                 });
