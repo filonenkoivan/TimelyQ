@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-using Domain.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    public interface IJwtProvider
+    public interface IEmailSenderService
     {
-        public string GenerateJwt(User user, Roles role);
+        public Task SendEmailAsync(string email, string subject, string text);
     }
 }

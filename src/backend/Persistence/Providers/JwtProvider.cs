@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Persistence.Configurations;
@@ -16,7 +17,7 @@ namespace Persistence.Providers
 {
     public class JwtProvider(IOptions<JwtConfiguration> options) : IJwtProvider
     {
-        public string GenerateJwt(User user)
+        public string GenerateJwt(User user, Roles role)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -24,7 +25,7 @@ namespace Persistence.Providers
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Surname, user.Surname),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, "User"),
+                new Claim(ClaimTypes.Role, role.ToString()),
                 new Claim("UserId", user.Id.ToString()),
             };
             var signingCredentials = new SigningCredentials(

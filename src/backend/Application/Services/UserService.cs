@@ -26,7 +26,7 @@ namespace Application.Services
                 return new BasicResponse<string>(StatusCode.NotFound, "User not found", "");
             }
 
-            string token = jwtProvider.GenerateJwt(user);
+            string token = jwtProvider.GenerateJwt(user, user.Role);
             return new BasicResponse<string>(StatusCode.Success, "Token created", token);
 
         }
@@ -53,9 +53,14 @@ namespace Application.Services
 
         public async Task<BasicResponse<string>> RegisterBusiness(User user, UserBusiness businessInfo)
         {
-            user.Role = Roles.UserBussines;
+            user.Role = Roles.UserBusiness;
             await repository.CreateUserBusinessAsync(user, businessInfo);
             return new BasicResponse<string>(StatusCode.Success, "User created", "");
+        }
+
+        public async Task<User> GetUserAsync(string login)
+        {
+            return await repository.GetUserAsync(login,  CheckLoginType(login));
         }
 
 

@@ -11,10 +11,12 @@ namespace Domain.Entities
     {
         public int Id { get; set; }
         [JsonIgnore]
-        public User? Client { get; set; }
         public int Time { get; set; }
         [JsonIgnore]
         public Schedule? Schedule { get; set; }
         public int ScheduleId { get; set; }
+
+        public int? ClientId { get; set; }
+        public User? Client { get; set; }
     }
 }

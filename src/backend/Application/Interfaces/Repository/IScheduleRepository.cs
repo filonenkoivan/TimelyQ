@@ -11,5 +11,8 @@ namespace Application.Interfaces.Repository
     public interface IScheduleRepository
     {
         public Task AddNewSchedule(ScheduleDTO schedule, int userId);
+        public Task AddUserToSchedule(int scheduleId, int scheduleEntryId, int userId);
+        public Task DeleteUserFromSchedule(int scheduleId, int scheduleEntryId);
+        public Task<Schedule> GetSchedule(int scheduleId);
     }
 }

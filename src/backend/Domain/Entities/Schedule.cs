@@ -15,10 +15,12 @@ namespace Domain.Entities
         public int WorkEndTime { get; set; }
         public int WorkDurationTime { get; set; }
 
-        //public DateTime LunchTime { get; set; } = DateTime.UtcNow;
-        //public DateTime TimeForEachClient { get; set; } = DateTime.UtcNow;
+        public int LunchTime { get; set; }
+        public int TimeForEachClient { get; set; } 
+
         [JsonIgnore]
         public UserBusiness? UserBusiness { get; set; }
         public int UserBusinessId { get; set; }
-    }
+
+    } 
 }

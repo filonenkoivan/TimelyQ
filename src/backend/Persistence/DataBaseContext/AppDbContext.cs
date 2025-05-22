@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,6 +31,7 @@ namespace Persistence.DataBaseContext
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new UserBusinessConfiguration());
             modelBuilder.ApplyConfiguration(new ScheduleConfiguration());
+            modelBuilder.ApplyConfiguration(new ScheduleEntryConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }
@@ -76,6 +78,20 @@ namespace Persistence.DataBaseContext
             builder.HasKey(x => x.Id);
             builder.HasMany(x => x.ScheduleEntries).WithOne(x => x.Schedule).HasForeignKey(x => x.ScheduleId);
         }
+    
     }
+
+    public class ScheduleEntryConfiguration : IEntityTypeConfiguration<ScheduleEntry>
+    {
+        public void Configure(EntityTypeBuilder<ScheduleEntry> builder)
+        {
+            builder
+                .HasOne(e => e.Client)
+                .WithMany()
+                .HasForeignKey(e => e.ClientId)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
+    }
+
 
 }

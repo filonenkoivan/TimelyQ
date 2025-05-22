@@ -29,6 +29,12 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("LunchTime")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TimeForEachClient")
+                        .HasColumnType("integer");
+
                     b.Property<int>("UserBusinessId")
                         .HasColumnType("integer");
 
@@ -149,7 +155,8 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Entities.User", "Client")
                         .WithMany()
-                        .HasForeignKey("ClientId");
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Domain.Entities.Schedule", "Schedule")
                         .WithMany("ScheduleEntries")

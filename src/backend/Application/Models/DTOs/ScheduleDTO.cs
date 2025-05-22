@@ -15,7 +15,7 @@ namespace Application.Models.DTOs
         public int WorkEndTime { get; set; }
         public int WorkDurationTime { get; set; }
 
-        public DateTime LunchTime { get; set; }
-        public DateTime TimeForEachClient { get; set; }
+        public int LunchTime { get; set; }
+        public int TimeForEachClient { get; set; }
     }
 }

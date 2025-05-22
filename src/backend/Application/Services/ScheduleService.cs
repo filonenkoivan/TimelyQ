@@ -28,5 +28,19 @@ namespace Application.Services
             await repository.AddNewSchedule(schedule, userId);
 
         }
+        public async Task AddUserToSchedule(int scheduleId, int scheduleEntryId, int userId)
+        {
+            await repository.AddUserToSchedule(scheduleId, scheduleEntryId, userId);
+        }
+
+        public async Task DeleteUserFromSchedule(int scheduleId, int scheduleEntryId)
+        {
+            await repository.DeleteUserFromSchedule(scheduleId, scheduleEntryId);
+        }
+
+        public async Task<Schedule> GetSchedule(int scheduleId)
+        {
+            return await repository.GetSchedule(scheduleId);
+        }
     }
 }

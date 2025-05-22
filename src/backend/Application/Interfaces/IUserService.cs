@@ -17,5 +17,7 @@ namespace Application.Interfaces
         public Task<BasicResponse<string>> RegisterBusiness(User user, UserBusiness businessInfo);
 
         public LoginType CheckLoginType(string login);
+
+        public Task<User> GetUserAsync(string email);
     }
 }
