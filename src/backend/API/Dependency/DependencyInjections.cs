@@ -1,4 +1,5 @@
-﻿using API.Contracts;
+﻿using API.BackgroundServices;
+using API.Contracts;
 using API.RealTimeDashboard;
 using API.Validation;
 using Application.Interfaces;
@@ -38,12 +39,12 @@ namespace API.Dependency
             builder.Services.AddScoped<ScheduleService>();
             builder.Services.AddScoped<IJwtProvider, JwtProvider>();
             builder.Services.AddScoped<IDashboardNotifier, DashboardNotifier>();
+            builder.Services.AddScoped<BackgroundEmailSender>();
             builder.Services.AddHangfire(x => x.UsePostgreSqlStorage(builder.Configuration.GetConnectionString("Timelyq")));
             builder.Services.AddStackExchangeRedisCache(opt =>
             {
                 opt.Configuration = builder.Configuration.GetConnectionString("Redis");
                 opt.InstanceName = "SampleApp";
-                // звернути увагу на цей нейм, вказано щось про ключі
             });
             builder.Services.AddHangfireServer();
             builder.Services.AddCors(options =>

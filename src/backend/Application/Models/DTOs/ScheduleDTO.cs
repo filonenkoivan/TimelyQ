@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Application.Models.DTOs
 {
+
     public class ScheduleDTO
     {
-        public List<ScheduleEntry>? ScheduleEntries { get; set; } = new List<ScheduleEntry>();
-
-        public int WorkStartTime { get; set; }
-        public int WorkEndTime { get; set; }
-        public int WorkDurationTime { get; set; }
-
-        public int LunchTime { get; set; }
-        public int TimeForEachClient { get; set; }
+        public ICollection<ScheduleEntry>? ScheduleEntries { get; set; } = new List<ScheduleEntry>();
+        public double WorkStartTime { get; set; }
+        public double WorkEndTime { get; set; }
+        public double WorkDurationTime { get; set; }
     }
+
 }
+
+

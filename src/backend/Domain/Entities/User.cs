@@ -17,6 +17,8 @@ namespace Domain.Entities
         public string? Password { get; set; }
         public Roles Role { get; set; }
         public int Id { get; set; }
+
+        public ICollection<ScheduleEntry>? Entries { get; set; } = new List<ScheduleEntry>();
         public UserBusiness? UserBusiness { get; set; }
     }
 }

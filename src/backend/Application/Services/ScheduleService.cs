@@ -1,7 +1,10 @@
-﻿using Application.Interfaces;
+﻿using Application.Enums;
+using Application.Interfaces;
 using Application.Interfaces.Repository;
+using Application.Models;
 using Application.Models.DTOs;
 using Domain.Entities;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO.Pipelines;
@@ -14,33 +17,53 @@ namespace Application.Services
 {
     public class ScheduleService(IScheduleRepository repository)
     {
-        public async Task CreateNewSchedule(ScheduleDTO schedule, int userId)
+        //ADMIN
+        public async Task CreateNewSchedule(ScheduleDTO scheduleDto, int userId)
         {
-            schedule.WorkDurationTime = schedule.WorkEndTime - schedule.WorkStartTime;
-            int counter = schedule.WorkStartTime;
-            for (var i = 0; i < schedule?.WorkDurationTime; i++)
-            {
+            scheduleDto.WorkDurationTime = scheduleDto.WorkEndTime - scheduleDto.WorkStartTime;
 
-                schedule?.ScheduleEntries.Add(new ScheduleEntry() { Time = counter});
-                counter++;
-            }
+            var schedule = new Schedule
+            {
+                WorkStartTime = TimeSpan.FromHours(scheduleDto.WorkStartTime),
+                WorkEndTime = TimeSpan.FromHours(scheduleDto.WorkEndTime),
+                WorkDurationTime = TimeSpan.FromHours(Math.Abs(scheduleDto.WorkEndTime - scheduleDto.WorkStartTime)),
+                CreatedTime = DateTime.UtcNow
+            };
 
             await repository.AddNewSchedule(schedule, userId);
 
         }
-        public async Task AddUserToSchedule(int scheduleId, int scheduleEntryId, int userId)
+        public async Task<bool> AddTimeIntervalToSchedule(int scheduleId, double startInterval, double endInterval, bool isLunch = false)
         {
-            await repository.AddUserToSchedule(scheduleId, scheduleEntryId, userId);
-        }
+            var schedule = await repository.GetSchedule(scheduleId);
 
-        public async Task DeleteUserFromSchedule(int scheduleId, int scheduleEntryId)
+            if(schedule == null)
+            {
+                return false;
+            }
+            if ((schedule?.ScheduleEntries?.Count == 0 ||
+                schedule.ScheduleEntries.All(
+                    x => x.StartTime.TotalMinutes >= endInterval || x.EndTime.TotalMinutes <= startInterval))
+                && startInterval < endInterval)
+            {
+                await repository.AddTimeIntervalToSchedule(scheduleId, startInterval, endInterval, isLunch);
+                return true;
+            }
+
+            return false;
+        }
+        public async Task<bool> DeleteUserFromSchedule(int scheduleId, int scheduleEntryId, int userId)
         {
-            await repository.DeleteUserFromSchedule(scheduleId, scheduleEntryId);
+            return await repository.DeleteUserFromSchedule(scheduleId, scheduleEntryId, userId);
         }
-
-        public async Task<Schedule> GetSchedule(int scheduleId)
+        public async Task<Schedule?> GetSchedule(int scheduleId)
         {
             return await repository.GetSchedule(scheduleId);
+        }
+        //CUSTOMER
+        public async Task<bool> AddUserToSchedule(int scheduleId, int scheduleEntryId, int userId)
+        {
+            return await repository.AddUserToSchedule(scheduleId, scheduleEntryId, userId);
         }
     }
 }

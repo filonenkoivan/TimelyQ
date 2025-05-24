@@ -16,5 +16,7 @@ namespace Application.Interfaces.Repository
         public Task CreateUserAsync(User user);
         public Task CreateUserBusinessAsync(User user, UserBusiness businessInfo);
 
+        public Task<ICollection<User>> GetCustomersAsync();
+
     }
 }

@@ -46,5 +46,12 @@ namespace Persistence.Repository
                 _ => await db.Users.FirstOrDefaultAsync(x => x.Login == login)
             };
         }
+
+        public async Task<ICollection<User>> GetCustomersAsync()
+        {
+            var users = await db.Users.Include(x=>x.Entries).ToListAsync();
+            return users;
+        }
+
     }
 }

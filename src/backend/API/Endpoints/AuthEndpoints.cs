@@ -37,8 +37,7 @@ namespace API.Endpoints
             RequestRegister request,
             IValidator<RequestRegister> validator,
             IEmailSenderService emailSenderService,
-            IUserService userService,
-            IConfiguration config
+            IUserService userService
             )
         {
             var result = await validator.ValidateAsync(request);
@@ -46,26 +45,34 @@ namespace API.Endpoints
             {
                 return Results.BadRequest(new BasicResponse<List<FluentValidation.Results.ValidationFailure>>(StatusCode.BadRequest, "Validation problem", result.Errors));
             }
-            await userService.Register(request.ToUserModel());
-            await emailSenderService.SendEmailAsync(request.Email, "Register", "Welcome to Timelyq!");
 
-            var configpas = config["Email:password"];
-            Console.WriteLine(configpas);
-            return Results.Ok();
+            var response = await userService.Register(request.ToUserModel());
+            if(response.StatusCode == StatusCode.Success)
+            {
+                await emailSenderService.SendEmailAsync(request.Email, "Register", "Welcome to Timelyq!");
+            }
+
+            return Results.Ok(response);
         }
 
         public async static Task<IResult> RegisterBusiness(
             RequestRegister request,
             IValidator<RequestRegister> validator,
-            IUserService userService)
+            IUserService userService,
+            IEmailSenderService emailSenderService)
         {
             var result = await validator.ValidateAsync(request);
             if (!result.IsValid)
             {
                 return Results.BadRequest(new BasicResponse<List<FluentValidation.Results.ValidationFailure>>(StatusCode.BadRequest, "Validation problem", result.Errors));
             }
-            await userService.RegisterBusiness(request.ToUserModel(), request.ToBusinessInfo());
-            return Results.Ok();
+
+            var response = await userService.RegisterBusiness(request.ToUserModel(), request.ToBusinessInfo());
+            if (response.StatusCode == StatusCode.Success)
+            {
+                await emailSenderService.SendEmailAsync(request.Email, "Register", "Welcome to Timelyq!");
+            }
+            return Results.Ok(response);
         }
 
         public async static Task<IResult> RestorePassword(

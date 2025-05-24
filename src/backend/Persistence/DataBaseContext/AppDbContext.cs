@@ -58,6 +58,8 @@ namespace Persistence.DataBaseContext
                 .HasOne(x => x.UserBusiness)
                 .WithOne(s => s.User)
                 .HasForeignKey<UserBusiness>(s => s.UserId);
+
+            builder.HasMany(x => x.Entries).WithOne().HasForeignKey(x => x.ClientId);
         }
     }
     public class UserBusinessConfiguration : IEntityTypeConfiguration<UserBusiness>
@@ -92,6 +94,5 @@ namespace Persistence.DataBaseContext
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }
-
 
 }

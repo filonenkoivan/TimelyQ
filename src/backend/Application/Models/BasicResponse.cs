@@ -19,5 +19,12 @@ namespace Application.Models
             Message = message;
             Data = data;
         }
+
+        public BasicResponse(StatusCode code, string message)
+        {
+            StatusCode = code;
+            Message = message;
+            Data = default;
+        }
     }
 }
