@@ -37,6 +37,6 @@ app.UseHangfireDashboard("/hangfiredash");
 app.MapHub<DashboardHub>("/dashboard");
 
 RecurringJob.AddOrUpdate<BackgroundEmailSender>("background sender", x => x.EmailSender(), Cron.MinuteInterval(15));
-
+ 
 app.Run();
 
