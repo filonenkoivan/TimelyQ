@@ -34,9 +34,6 @@ namespace Persistence.Repository
             if (schedule == null)
                 return false;
 
-            //if (schedule.ScheduleEntries.Any(x=>x.Client == user))
-            //    return false;
-
             user?.Entries?.Add(scheduleEntry);
             scheduleEntry.Client = user;
 
