@@ -2,6 +2,7 @@
 using Application.Interfaces.Repository;
 using Application.Models.DTOs;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Persistence.DataBaseContext;
@@ -49,7 +50,7 @@ namespace Persistence.Repository
             var schedule = await db.Schedule.Include(x => x.ScheduleEntries).FirstOrDefaultAsync(x => x.Id == scheduleId);
             var scheduleEntry = schedule?.ScheduleEntries?.FirstOrDefault(x => x.Id == scheduleEntryId);
             var user = await db.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            if (scheduleEntry == null)
+            if (scheduleEntry == null || user.Role != Roles.UserBusiness || scheduleEntry.ClientId != userId)
             {
                 return false;
             }
